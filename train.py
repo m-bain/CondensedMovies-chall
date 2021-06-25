@@ -66,7 +66,8 @@ def run():
                       visualizer=visualizer,
                       writer=writer,
                       tokenizer=tokenizer,
-                      max_samples_per_epoch=config['trainer']['max_samples_per_epoch'])
+                      max_samples_per_epoch=config['trainer']['max_samples_per_epoch'],
+                      init_val=config['trainer']['init_val'])
 
     trainer.train()
 
@@ -91,9 +92,10 @@ if __name__ == '__main__':
     ex.add_config(config._config)
 
     if config['trainer']['neptune']:
+        raise ValueError("Neptune credentials not yet added")
         ex.observers.append(NeptuneObserver(
-            api_token='eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiZTc0YTljY2YtMWNiMi00YWYyLTkyOGYtNmQ1MzgzMjc3NmY0In0=',
-            project_name='m-bain/frozen'))
+            api_token='',
+            project_name=''))
         ex.run()
     else:
         run()

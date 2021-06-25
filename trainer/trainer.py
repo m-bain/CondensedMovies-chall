@@ -17,7 +17,7 @@ class Trainer(BaseTrainer):
 
     def __init__(self, model, loss, metrics, optimizer, config, data_loader,
                  valid_data_loader=None, lr_scheduler=None, len_epoch=None, writer=None,
-                 visualizer=None, tokenizer=None, max_samples_per_epoch=50000, init_val=False):
+                 visualizer=None, tokenizer=None, max_samples_per_epoch=50000, init_val=True):
         super().__init__(model, loss, metrics, optimizer, config, writer, init_val=init_val)
         self.init_val = init_val
         self.config = config

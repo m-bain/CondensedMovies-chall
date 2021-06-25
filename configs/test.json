@@ -77,7 +77,8 @@
         "verbosity": 2,
         "monitor": "min val_loss",
         "early_stop": 10,
-        "neptune": false
+        "neptune": false,
+        "init_val": true
     },
     "visualizer": {
         "type": ""
