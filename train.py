@@ -37,6 +37,8 @@ def run():
     print('Train dataset: ', len(data_loader.sampler), ' samples')
     print('Val dataset: ', len(valid_data_loader.sampler), ' samples')
     # build model architecture, then print to console
+    config['arch']['args']['experts_used'] = data_loader.dataset.experts_used
+
     model = config.initialize('arch', module_arch)
     logger.info(model)
 

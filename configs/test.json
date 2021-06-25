@@ -1,44 +1,56 @@
 {
-    "name": "MSRVTTjsfusion_4f_stformer_pt-im21k",
+    "name": "debug",
     "n_gpu": 4,
     "arch": {
-        "type": "FrozenInTime",
+        "type": "BaselineModel",
         "args": {
-            "video_params": {
-                "model": "SpaceTimeTransformer",
-                "arch_config": "base_patch16_224",
-                "num_frames": 4,
-                "pretrained": true,
-                "time_init": "zeros"
-            },
-            "text_params": {
+        "text_params": {
                 "model": "distilbert-base-uncased",
                 "pretrained": true,
                 "input": "text"
             },
-            "projection": "minimal"
+        "projection_dim": 256
         }
     },
     "data_loader": {
-        "type": "TextVideoDataLoader",
+        "type": "CondensedMoviesDataLoader",
         "args":{
-            "dataset_name": "MSRVTT",
-            "data_dir": "$TMPDIR/MSRVTT/",
+            "data_dir": "/scratch/shared/beegfs/maxbain/datasets/CondensedMovies",
             "shuffle": true,
-            "num_workers": 16,
-            "batch_size": 16,
+            "num_workers": 4,
+            "batch_size": 32,
             "split": "train",
-            "cut": "jsfusion",
-            "subsample": 1,
-            "text_params": {
-                "input": "text"
-            },
-            "video_params": {
-                "extraction_fps": 25,
-                "extraction_res": 256,
-                "input_res": 224,
-                "num_frames": 4,
-                "stride": 1
+            "experts": {
+                "resnext101": {
+                    "src": "pred_imagenet_25fps_256px_stride25_offset0/resnext101_32x48d",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "senet154": {
+                    "src": "pred_imagenet_25fps_256px_stride25_offset0/senet154",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "i3d": {
+                    "src": "pred_i3d_25fps_256px_stride8_offset0_inner_stride1/i3d",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "vggish": {
+                    "src": "pred_audio/vggish",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "scene": {
+                    "src": "pred_scene_25fps_256px_stride25_offset0/densenet161",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "r2p1d": {
+                    "src": "pred_r2p1d_30fps_256px_stride16_offset0_inner_stride1/r2p1d-ig65m",
+                    "max_tokens": 128,
+                    "use": true
+                }
             }
         }
     },
@@ -68,12 +80,6 @@
         "neptune": false
     },
     "visualizer": {
-        "type": "RetrievalVis",
-        "args": {
-            "src_video_dir": "$TMPDIR/MSRVTT/",
-            "vis_vid_freq": 1,
-            "num_samples": 20
-        }
+        "type": ""
     }
-
 }

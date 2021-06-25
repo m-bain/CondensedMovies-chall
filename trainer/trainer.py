@@ -19,7 +19,7 @@ class Trainer(BaseTrainer):
                  valid_data_loader=None, lr_scheduler=None, len_epoch=None, writer=None,
                  visualizer=None, tokenizer=None, max_samples_per_epoch=50000, init_val=False):
         super().__init__(model, loss, metrics, optimizer, config, writer, init_val=init_val)
-        self.init_val = True
+        self.init_val = init_val
         self.config = config
         self.data_loader = data_loader
         if len_epoch is None:
@@ -70,19 +70,18 @@ class Trainer(BaseTrainer):
         for batch_idx, data in enumerate(self.data_loader):
             if (batch_idx + 1) * self.batch_size > self.max_samples_per_epoch:
                 break
-            if isinstance(data['video'], list):
-                data['video'] = [x.to(self.device) for x in data['video']]
-            else:
-                data['video'] = data['video'].to(self.device)
             # then assume we must tokenize the input, e.g. its a string
             if self.tokenizer is not None:
                 data['text'] = self.tokenizer(data['text'], return_tensors='pt', padding=True,
                                               truncation=True)
             data['text'] = {key: val.cuda() for key, val in data['text'].items()}
+            for key, val in data['video'].items():
+                data['video'][key]['ftr'] = data['video'][key]['ftr'].cuda()
+                data['video'][key]['n_tokens'] = data['video'][key]['n_tokens'].cuda()
 
             self.optimizer.zero_grad()
-            text_embeds, video_embeds = self.model(data)
-            output = sim_matrix(text_embeds, video_embeds)
+            output = self.model(data)
+            #output = sim_matrix(text_embeds, video_embeds)
             loss = self.loss(output)
             loss.backward()
             self.optimizer.step()
@@ -134,20 +133,25 @@ class Trainer(BaseTrainer):
         vid_embed_arr = []
         with torch.no_grad():
             for batch_idx, data in enumerate(self.valid_data_loader):
-                meta_arr.append(data['meta'])
+                #meta_arr.append(data['meta'])
                 if self.tokenizer is not None:
                     data['text'] = self.tokenizer(data['text'], return_tensors='pt', padding=True, truncation=True)
                 data['text'] = {key: val.cuda() for key, val in data['text'].items()}
-                text_embed, vid_embed = self.model(data, return_embeds=True)
+                for key, val in data['video'].items():
+                    data['video'][key]['ftr'] = data['video'][key]['ftr'].cuda()
+                    data['video'][key]['n_tokens'] = data['video'][key]['n_tokens'].cuda()
+                sim_mat, text_embed, vid_embed = self.model(data, eval=True)
                 text_embed_arr.append(text_embed.cpu())
                 vid_embed_arr.append(vid_embed.cpu())
-                sims_batch = sim_matrix(text_embed, vid_embed)
-                loss = self.loss(sims_batch)
+                loss = self.loss(sim_mat)
                 total_val_loss += loss.item()
 
             text_embeds = torch.cat(text_embed_arr)
             vid_embeds = torch.cat(vid_embed_arr)
-            sims = sim_matrix(text_embeds, vid_embeds).detach().cpu().numpy()
+            #sims = sim_matrix(text_embeds, vid_embeds).detach().cpu().numpy()
+            embed_stack = torch.einsum('ted,ved->tve', text_embeds, vid_embeds)
+            sims = embed_stack.sum(dim=2) / embed_stack.shape[2]
+            sims = sims.detach().cpu().numpy()
 
         # TODO: this needs a clean
         if self.writer is not None:

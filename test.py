@@ -56,10 +56,7 @@ def run():
             if tokenizer is not None:
                 data['text'] = tokenizer(data['text'], return_tensors='pt', padding=True, truncation=True)
             data['text'] = {key: val.cuda() for key, val in data['text'].items()}
-            if isinstance(data['video'], list):
-                data['video'] = [x.to(device) for x in data['video']]
-            else:
-                data['video'] = data['video'].to(device)
+
 
             text_embed, vid_embed = model(data, return_embeds=True)
             text_embed_arr.append(text_embed)

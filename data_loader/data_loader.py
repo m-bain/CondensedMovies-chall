@@ -1,17 +1,17 @@
 from base import BaseDataLoader, BaseDataLoaderExplicitSplit
 from torchvision import transforms
-from Cond
+from data_loader.CondensedMovies_dataset import CondensedMovies
 
-class CondensedMoviesDataLoader(BaseDataLoader):
+class CondensedMoviesDataLoader(BaseDataLoaderExplicitSplit):
     """
     CondensedeMovies DataLoader.
     """
 
-    def __init__(self, data_dir, metadata_dir, label, experts_used, experts, max_tokens, batch_size, split='train', shuffle=True, num_workers=4):
+    def __init__(self, data_dir, experts, batch_size, split='train', shuffle=True, num_workers=4):
         self.data_dir = data_dir
-        self.dataset = CondensedMovies(data_dir, metadata_dir, label, experts_used, experts, max_tokens, split)
-
+        self.dataset = CondensedMovies(data_dir, experts, split)
+        self.dataset_name = 'CondensedMovies'
         # batch size of entire val test set. change this for intra-movie
-        if split in ['val', 'test']:
-            batch_size = len(self.dataset.data['clips'])
-        super().__init__(self.dataset, batch_size, shuffle, split, num_workers)
+        #if split in ['val', 'test']:
+        #    batch_size = len(self.dataset.data'clips')
+        super().__init__(self.dataset, batch_size, shuffle, num_workers)

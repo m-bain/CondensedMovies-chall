@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 from base import BaseModel
-from utils.util import state_dict_data_parallel_fix
+from utils.expert_dims import expert_dims
 from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
 import torch
 
@@ -9,9 +9,9 @@ import torch
 class BaselineModel(BaseModel):
     def __init__(self,
                  experts_used,
-                 expert_dims,
                  projection_dim,
-                 text_params):
+                 text_params,
+                 token_aggregation='mean'):
         super().__init__()
 
         self.experts_used = experts_used
@@ -20,17 +20,53 @@ class BaselineModel(BaseModel):
             for expert in experts_used
         })
 
-        txt_dim = text_params['dim']
+        self.text_model = AutoModel.from_pretrained(text_params['model'])
+        txt_dim = self.text_model.config.hidden_size
         self.text_GU = nn.ModuleDict({
             expert: Gated_Embedding_Unit(txt_dim, projection_dim, channels=0)
             for expert in experts_used
 
         })
 
+        self.token_agg = token_aggregation
+        self.text_params = text_params
 
-    def forward(self, x):
+    def forward(self, x, eval=False):
+
+        video_ftrs = {}
         for expert in self.experts_used:
-            ftr = x[expert]['ftr']
+            ftr = x['video'][expert]['ftr']
+            if self.token_agg == 'mean':
+                ftr = ftr.sum(dim=1) / x['video'][expert]['n_tokens'].unsqueeze(1)
+            else:
+                raise NotImplementedError
+            video_ftrs[expert] = ftr.float()
+
+        video_mod = []
+        for exp, ftr in video_ftrs.items():
+            video_mod.append(self.video_GU[exp](ftr))
+
+        video_mod = torch.stack(video_mod, dim=1)
+
+        if self.text_params['model'].startswith('bert'):
+            txt_ftr = self.text_model(x['text']['input_ids'], attention_mask=x['text']['attention_mask'])[
+                'pooler_output']
+        elif self.text_params['model'].startswith('distilbert'):
+            txt_ftr = self.text_model(**x['text']).last_hidden_state[:, 0, :]
+        else:
+            raise NotImplementedError
+
+        txt_mod = [self.text_GU[exp](txt_ftr) for exp in self.experts_used]
+        txt_mod = torch.stack(txt_mod, dim=1)
+
+        video_mod = F.normalize(video_mod, dim=-1)
+        txt_mod = F.normalize(txt_mod, dim=-1)
+        embed_stack = torch.einsum('ted,ved->tve', txt_mod, video_mod)
+        conf_mat = embed_stack.sum(dim=2) / len(self.experts_used)
+
+        if eval:
+            return conf_mat, txt_mod, video_mod
+        return conf_mat
 
 
 class Gated_Embedding_Unit(nn.Module):

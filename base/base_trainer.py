@@ -8,7 +8,7 @@ class BaseTrainer:
     """
     Base class for all trainers
     """
-    def __init__(self, model, loss, metrics, optimizer, config, writer=None, init_val=False):
+    def __init__(self, model, loss, metrics, optimizer, config, writer=None, init_val=True):
         self.config = config
         self.logger = config.get_logger('trainer', config['trainer']['verbosity'])
         self.init_val = init_val
@@ -74,7 +74,6 @@ class BaseTrainer:
         Full training logic
         """
         not_improved_count = 0
-
         if self.init_val:
             _ = self._valid_epoch(-1)
 
