@@ -18,7 +18,7 @@
             "data_dir": "/scratch/shared/beegfs/maxbain/datasets/CondensedMovies",
             "shuffle": true,
             "num_workers": 4,
-            "batch_size": 32,
+            "batch_size": 64,
             "split": "train",
             "experts": {
                 "resnext101": {

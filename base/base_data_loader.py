@@ -67,7 +67,7 @@ class BaseDataLoaderExplicitSplit(DataLoader):
     """
     Base class for all data loaders
     """
-    def __init__(self, dataset, batch_size, shuffle, num_workers, collate_fn=default_collate):
+    def __init__(self, dataset, batch_size, shuffle, num_workers, collate_fn=default_collate, drop_last=False):
         self.shuffle = shuffle
 
         self.batch_idx = 0
@@ -78,7 +78,8 @@ class BaseDataLoaderExplicitSplit(DataLoader):
             'batch_size': batch_size,
             'shuffle': self.shuffle,
             'collate_fn': collate_fn,
-            'num_workers': num_workers
+            'num_workers': num_workers,
+            'drop_last': drop_last
         }
         super().__init__(**self.init_kwargs)
 

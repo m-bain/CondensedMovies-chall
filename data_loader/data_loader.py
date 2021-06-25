@@ -12,6 +12,9 @@ class CondensedMoviesDataLoader(BaseDataLoaderExplicitSplit):
         self.dataset = CondensedMovies(data_dir, experts, split)
         self.dataset_name = 'CondensedMovies'
         # batch size of entire val test set. change this for intra-movie
-        #if split in ['val', 'test']:
+        if split in ['train', 'val']:
+            drop_last = True
+        else:
+            drop_last = False
         #    batch_size = len(self.dataset.data'clips')
-        super().__init__(self.dataset, batch_size, shuffle, num_workers)
+        super().__init__(self.dataset, batch_size, shuffle, num_workers, drop_last=drop_last)
