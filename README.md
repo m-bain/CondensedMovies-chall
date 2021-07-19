@@ -16,6 +16,8 @@ To participate in the challenge, you must first download the new **Challenge ver
 
 Here, we provide an overview and detail for the downloaded dataset. For more details on the features used in the challenge, see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/features.html "here").
 
+```
+
 ├── features
 │   ├── pred_audio
 │   │      └── vggish   
@@ -34,6 +36,7 @@ Here, we provide an overview and detail for the downloaded dataset. For more det
 │   ├── test_challf0.csv
 │   └── train_val_challf0.csv
 
+```
 **Train/Val/Test Splits:** the splits are contained in and read from the text description csv files (e.g. metadata/train_val_challf0.csv & metadata/test_challf0.csv)
 
 **todo**
