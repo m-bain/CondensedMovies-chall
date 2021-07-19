@@ -14,27 +14,27 @@ To participate in the challenge, you must first download the new **Challenge ver
 
 ## Dataset Overview
 
-Here, we provide an overview and detail for the downloaded dataset. For more details on the features used in the challenge, see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/features.html "here").
+Here, we provide an overview and detail for the downloaded dataset. For more information on the following features in the dataset, including details architectures and datsets, see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/features.html "here").
 
 ```
 
 ├── features
 │   ├── pred_audio
-│   │      └── vggish   
+│   │      └── vggish   (audio features)
 │   ├── pred_i3d_25fps_256px_stride8_offset0_inner_stride1
-│   │      └── i3d  
+│   │      └── i3d  (action features)
 │   ├── pred_imagenet_25fps_256px_stride25_offset0
-│   │      └── resnext101_32x48d  
-│   │      └── senet154  
+│   │      └── resnext101_32x48d  (Instagram Hashtags, fine-tuned on ImageNet features)
+│   │      └── senet154  (ImageNet features)
 │   ├── pred_r2p1d_30fps_256px_stride16_offset0_inner_stride1
-│   │      └── r2p1d-ig65m  
+│   │      └── r2p1d-ig65m  (Instagram 65m, fine-tuned on Kinetics)
 │   └── pred_scene_25fps_256px_stride25_offset0
-│   │      └── densenet161  
+│   │      └── densenet161  (scene features)
 ├── metadata
-│   ├── subs_test.json
-│   ├── subs_train_val.json
-│   ├── test_challf0.csv
-│   └── train_val_challf0.csv
+│   ├── subs_test.json (raw text subtitle files for the test set)
+│   ├── subs_train_val.json (raw text subtitle files for the train/val set)
+│   ├── test_challf0.csv (raw text descriptions for the test set)
+│   └── train_val_challf0.csv (raw text descriptions for the train/val set)
 
 ```
 **Train/Val/Test Splits:** the splits are contained in and read from the text description csv files (e.g. metadata/train_val_challf0.csv & metadata/test_challf0.csv)
