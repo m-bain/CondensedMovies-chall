@@ -40,8 +40,8 @@ Here, we provide an overview and detail for the downloaded dataset. For more inf
 
 Below is an overview for the dataset tree structure within a specific feature directory. The features from the train/val videos are further subaranged by year (i.e. 2011 -> 2019 directories). The features from the test videos are found in the 'test' directory.
 
-'''
-.
+```
+
 └── vggish 
     ├── 2011 
         ├── sBjNpZ5t9S4.npy
@@ -69,7 +69,7 @@ Below is an overview for the dataset tree structure within a specific feature di
         ├── 1062.pkl.npy
         ├── 1063.pkl.npy
         ├── ...
-'''
+```
 
 
 **Train/Val/Test Splits:** the splits are contained in and read from the text description csv files (e.g. metadata/train_val_challf0.csv & metadata/test_challf0.csv)
