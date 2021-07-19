@@ -1,8 +1,7 @@
 #!/bin/bash
 # A script to download and unpack the visual data for the Condensed Movies Challenge
 
-Output_Directory=""
-
+Output_Directory="../dataset"
 
 for FILE_INDEX in {'a','b','c','d','e','f','g','h','i','j','k','l'}
     do
