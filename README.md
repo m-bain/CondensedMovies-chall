@@ -14,7 +14,7 @@ To participate in the challenge, you must first download the new **Challenge ver
 
 ## Dataset Overview
 
-Here, we provide an overview and detail for the downloaded dataset. For more information on the following features in the dataset, including details architectures and datsets, see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/features.html "here").
+Here, we provide an overview and detail for the downloaded dataset. For more information on the following features in the dataset, including details architectures and datsets, see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/features.html "here"). Below is an overview of the dataset tree structure with details:
 
 ```
 
@@ -37,6 +37,40 @@ Here, we provide an overview and detail for the downloaded dataset. For more inf
 │   └── train_val_challf0.csv (raw text descriptions for the train/val set)
 
 ```
+
+Below is an overview for the dataset tree structure within a specific feature directory. The features from the train/val videos are further subaranged by year (i.e. 2011 -> 2019 directories). The features from the test videos are found in the 'test' directory.
+
+'''
+.
+└── vggish 
+    ├── 2011 
+        ├── sBjNpZ5t9S4.npy
+        ├── SBLMTDMdTIU.npy
+        ├── SbTWLdT_tgk.npy
+        ├── ...
+    ├── 2012 
+        ├── ...
+    ├── 2013
+        ├── ...
+    ├── 2014
+        ├── ...
+    ├── 2015
+        ├── ...
+    ├── 2016
+        ├── ...
+    ├── 2017
+        ├── ...
+    ├── 2018
+        ├── ...
+    ├── 2019
+        ├── ...
+    └── test (the features for the test videos)
+        ├── 1061.pkl.npy
+        ├── 1062.pkl.npy
+        ├── 1063.pkl.npy
+        ├── ...
+'''
+
+
 **Train/Val/Test Splits:** the splits are contained in and read from the text description csv files (e.g. metadata/train_val_challf0.csv & metadata/test_challf0.csv)
 
-**todo**
