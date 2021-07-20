@@ -14,3 +14,10 @@ for FILE_INDEX in {'a','b','c','d','e','f','g','h','i','j','k','l'}
 
 wget -c https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/assets_challenge/metadata.tar.gz -O - | tar -xz -C $Output_Directory
 
+# 3) subtitle features
+
+# do not edit this path
+preds_directory = Output_Directory + '/features'
+
+wget -c https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/assets_challenge/pred_subs.tar.gz -O - | tar -xz -C $preds_directory
+
