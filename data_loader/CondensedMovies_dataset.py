@@ -108,7 +108,6 @@ if __name__ == "__main__":
                                  "src": "pred_audio/vggish",
                                  "max_tokens": 128,
                                  "use": True,
-                                 "ext": ".pkl.npy"
                              },
                              "densenet161": {
                                  "src": "pred_scene_25fps_256px_stride25_offset0/densenet161",

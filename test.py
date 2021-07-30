@@ -10,6 +10,8 @@ from sacred import Experiment
 import transformers
 from trainer.trainer import verbose
 import numpy as np
+from utils.util import state_dict_data_parallel_fix
+
 ex = Experiment('test')
 
 @ex.main
