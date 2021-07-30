@@ -4,6 +4,7 @@ import pandas as pd
 from os.path import join as osj
 import numpy as np
 import random
+from utils.expert_dims import expert_dims
 
 
 class CondensedMovies(Dataset):
@@ -24,11 +25,13 @@ class CondensedMovies(Dataset):
         if self.split in ['train', 'val']:
             df = pd.read_csv(osj(self.metadata_dir, 'train_val_challf0.csv'))
         elif self.split == 'test':
-            raise ValueError("Test set not yet available")
+            df = pd.read_csv(osj(self.metadata_dir, 'test_challf0.csv')).sort_values('videoid')
+            df.sort_values('videoid', inplace=True)
         else:
             raise ValueError("Split should be either train, val or test")
 
         df = df[df['split'] == self.split]
+        df['videoid'] = df['videoid'].astype(str)
         self.data = df
 
     def __len__(self):
@@ -40,15 +43,23 @@ class CondensedMovies(Dataset):
         datum = {}
         video_data = {}
         for expert in self.experts_used:
-            ftr_fp = osj(self.data_dir, 'challenge', 'features', self.experts[expert]['src'], str(sample['upload_year']),
-                         sample['videoid'] + '.npy')
-            ftr = np.load(ftr_fp, allow_pickle=True).item()['raw_feats']
+            ftr_fp = osj(self.data_dir, 'challenge', 'features', self.experts[expert]['src'],
+                         str(sample['upload_year']),
+                         sample['videoid'] + self.experts[expert].get('ext', '.npy'))
+            if not os.path.isfile(ftr_fp):
+                if expert != "subtitles":
+                    raise ValueError(
+                        "All features should be available for every video, except for subtitles sometimes.\n"
+                        f"{expert} ftr not found for {sample['videoid']}, {ftr_fp}")
+                # just fill features with zeros
+                ftr = np.zeros([1, expert_dims[expert]])
+            else:
+                ftr = np.load(ftr_fp, allow_pickle=True).item()['raw_feats']
             ftr, toks = self._pad_to_max_tokens(ftr, self.experts[expert]['max_tokens'])
-            video_data[expert] = {'ftr': ftr, 'n_tokens': toks,}
+            video_data[expert] = {'ftr': ftr, 'n_tokens': toks, }
 
         datum['text'] = sample['caption']
         datum['video'] = video_data
-
         return datum
 
     def _pad_to_max_tokens(self, ftr, max_tokens):
@@ -58,7 +69,7 @@ class CondensedMovies(Dataset):
         """
         output_shape = list(ftr.shape)
         output_shape[0] = max_tokens
-        output_arr = np.ones(output_shape)
+        output_arr = np.zeros(output_shape)
 
         if ftr.shape[0] <= max_tokens:
             output_arr[:ftr.shape[0]] = ftr
@@ -69,33 +80,14 @@ class CondensedMovies(Dataset):
             else:
                 start_idx = int((ftr.shape[0] / 2) - (max_tokens / 2))
             n_tokens = max_tokens
-            output_arr = ftr[start_idx:start_idx+max_tokens]
+            output_arr = ftr[start_idx:start_idx + max_tokens]
 
         return output_arr, n_tokens
 
 
-def make_new_splits():
-    metadata_dir = '/scratch/shared/beegfs/maxbain/datasets/CondensedMovies/metadata'
-    df = pd.read_csv(osj(metadata_dir, 'clips.csv'))
-    split_data = pd.read_csv(osj(metadata_dir, 'split.csv')).set_index('imdbid')
-
-    # put val in new train
-    df.set_index('imdbid', inplace=True)
-    df['split'] = split_data
-    df['split'] = np.where(df['split'] == 'val', 'train', df['split'])
-    df['split'] = np.where(df['split'] == 'test', 'val', df['split'])
-
-    valdf = df[df['split'] == 'val']
-    valdf['imdbid'] = valdf.index
-    # reduce val to 1k? 2k?
-    valimdbids = valdf['imdbid'].unique()
-    val_to_keep = valimdbids[:len(valimdbids)//3]
-    import pdb; pdb.set_trace()
-
-
 if __name__ == "__main__":
-    #make_new_splits()
-    ds = CondensedMovies('/scratch/shared/beegfs/maxbain/datasets/CondensedMovies/',
+    # make_new_splits()
+    ds = CondensedMovies('/scratch/local/ssd/maxbain/CondensedMovies/',
                          {
                              "resnext101": {
                                  "src": "pred_imagenet_25fps_256px_stride25_offset0/resnext101_32x48d",
@@ -115,7 +107,8 @@ if __name__ == "__main__":
                              "vggish": {
                                  "src": "pred_audio/vggish",
                                  "max_tokens": 128,
-                                 "use": True
+                                 "use": True,
+                                 "ext": ".pkl.npy"
                              },
                              "densenet161": {
                                  "src": "pred_scene_25fps_256px_stride25_offset0/densenet161",
@@ -126,10 +119,14 @@ if __name__ == "__main__":
                                  "src": "pred_r2p1d_30fps_256px_stride16_offset0_inner_stride1/r2p1d-ig65m",
                                  "max_tokens": 128,
                                  "use": True
+                             },
+                             "subtitles": {
+                                 "src": "pred_subs/bert-base-uncased_line",
+                                 "max_tokens": 128,
+                                 "use": True
                              }
                          },
-                         split='train'
+                         split='test'
                          )
-    res = ds.__getitem__(0)
-    import pdb; pdb.set_trace()
-    print(res)
+    for x in range(len(ds)):
+        ds.__getitem__(x)

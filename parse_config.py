@@ -124,6 +124,8 @@ def _update_config(config, options, args):
         value = getattr(args, _get_opt_name(opt.flags))
         if value is not None:
             _set_by_path(config, opt.target, value)
+        else:
+            _set_by_path(config, opt.target, opt.default)
     return config
 
 

@@ -1,5 +1,5 @@
 {
-    "name": "debug",
+    "name": "baseline_allexperts",
     "n_gpu": 4,
     "arch": {
         "type": "BaselineModel",
@@ -15,7 +15,7 @@
     "data_loader": {
         "type": "CondensedMoviesDataLoader",
         "args":{
-            "data_dir": "/scratch/shared/beegfs/maxbain/datasets/CondensedMovies",
+            "data_dir": "data/CondensedMovies",
             "shuffle": true,
             "num_workers": 4,
             "batch_size": 64,
@@ -50,6 +50,11 @@
                     "src": "pred_r2p1d_30fps_256px_stride16_offset0_inner_stride1/r2p1d-ig65m",
                     "max_tokens": 128,
                     "use": true
+                },
+                "subtitles": {
+                    "src": "pred_subs/bert-base-uncased_line",
+                    "max_tokens": 128,
+                    "use": true
                 }
             }
         }
@@ -57,7 +62,7 @@
     "optimizer": {
         "type": "AdamW",
         "args":{
-            "lr": 3e-5
+            "lr": 3e-4
         }
     },
     "loss": {
@@ -71,8 +76,8 @@
      ],
     "trainer": {
         "epochs": 100,
-        "max_samples_per_epoch": 9000,
-        "save_dir": "/work/maxbain/Libs/frozen-in-time",
+        "max_samples_per_epoch": 30000,
+        "save_dir": "exps",
         "save_period": 5,
         "verbosity": 2,
         "monitor": "min val_loss",

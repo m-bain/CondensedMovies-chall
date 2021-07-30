@@ -8,9 +8,11 @@ To participate in the challenge, you must first download the new **Challenge ver
 
 1) Clone this repository.
 
-2)  **Download the dataset**. First, you can optionally choose where to download the features to. To do this, in [scripts/download_dataset.sh](https://github.com/m-bain/CondensedMovies-chall/blob/main/scripts/download_dataset.sh "download_dataset.sh") edit the variable "Output_Directory" to give the path to where you would like the visual features to be downloaded to. By default the features will be downloaded to the directory "dataset". The dataset totals xGB.  Second, download the dataset. Run "cd scripts", and "./download_dataset.sh". 
+2)  **Download the dataset** (xGB). First, you can optionally choose where to download the features to (otherwise its downloaded to `./data`). To do this:
+    - [Optional] Set environment variable `export DATA_DIR="PATH_WHERE_YOU_WANT_TO_STORE_DATA`
+    - Download `bash ./scripts/download_dataset.sh`
+    - [Optional] If you set custom DATA_DIR, set up a symlink so it maps to ./data: `cd data; ln -s $DATA_DIR/CondensedMovies .; cd ..` 
 
-**todo: need to get the text features into this**
 
 ## Dataset Overview
 
@@ -30,6 +32,8 @@ Here, we provide an overview and detail for the downloaded dataset. For more inf
 │   │      └── r2p1d-ig65m  (Instagram 65m, fine-tuned on Kinetics)
 │   └── pred_scene_25fps_256px_stride25_offset0
 │   │      └── densenet161  (scene features)
+│   └── pred_subs
+│   │      └── bert-base-uncased_line  (BERT subtitle features)
 ├── metadata
 │   ├── subs_test.json (raw text subtitle files for the test set)
 │   ├── subs_train_val.json (raw text subtitle files for the train/val set)
@@ -74,3 +78,35 @@ Below is an overview for the dataset tree structure within a specific feature di
 
 **Train/Val/Test Splits:** the splits are contained in and read from the text description csv files (e.g. metadata/train_val_challf0.csv & metadata/test_challf0.csv)
 
+
+## Training and Evaluation
+
+### 📝 Preparation 
+
+Create conda env `conda env create -f requirements/cmd-chall.yml` (assumes CUDA 11.1, adjust if needed).
+
+Experiment checkpoints / dataset saves to `exps` by default, can become large in size, set up symlink if you want to store elsewhere.
+
+### 🏋️‍️ Baseline Training
+
+`python train.py --config configs/baseline.json`
+
+Adjust batch_size, n_gpu, exp_name in the config file accordingly.
+
+### 🏁 Evaluation
+
+#### Validation Check
+Evaluate on val set `python test.py --resume exps/models/{EXP_NAME}/{TIMESTAMP}/model_best.pth --split val`
+
+#### Test Submission
+Evaluate on test set `python test.py --resume exps/models/{EXP_NAME}/{TIMESTAMP}/model_best.pth --split test`
+
+Similarity matrix should be saved at `exps/models/{EXP_NAME}/{TIMESTAMP}/sim_matrix_test.npy`.
+Please upload this to codalab for your submission.
+
+
+
+
+
+
+ 

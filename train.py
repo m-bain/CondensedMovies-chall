@@ -1,6 +1,4 @@
 import argparse
-import collections
-import torch
 import data_loader.data_loader as module_data
 import model.loss as module_loss
 import model.metric as module_metric
@@ -9,7 +7,6 @@ import utils.visualizer as module_vis
 from parse_config import ConfigParser
 from trainer import Trainer
 from sacred import Experiment
-from neptunecontrib.monitoring.sacred import NeptuneObserver
 import transformers
 
 ex = Experiment('train')
@@ -82,16 +79,12 @@ if __name__ == '__main__':
                       help='indices of GPUs to enable (default: all)')
     args.add_argument('-o', '--observe', action='store_true',
                       help='Whether to observe (neptune)')
-    # custom cli options to modify configuration from default values given in json file.
-    CustomArgs = collections.namedtuple('CustomArgs', 'flags type target')
-    options = [
-        CustomArgs(['--lr', '--learning_rate'], type=float, target=('optimizer', 'args', 'lr')),
-        CustomArgs(['--bs', '--batch_size'], type=int, target=('data_loader', 'args', 'batch_size')),
-    ]
-    config = ConfigParser(args, options)
+
+    config = ConfigParser(args)
     ex.add_config(config._config)
 
     if config['trainer']['neptune']:
+        from neptunecontrib.monitoring.sacred import NeptuneObserver
         raise ValueError("Neptune credentials not yet added")
         ex.observers.append(NeptuneObserver(
             api_token='',
