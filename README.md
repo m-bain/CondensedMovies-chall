@@ -83,7 +83,7 @@ Below is an overview for the dataset tree structure within a specific feature di
 
 ### 📝 Preparation 
 
-Create conda env `conda env create -f requirements/cmd-chall.yml` (assumes CUDA 11.1, adjust if needed).
+Create conda env `conda env create -f requirements/environment.yml` (assumes CUDA 11.1, adjust if needed).
 
 Experiment checkpoints / dataset saves to `exps` by default, can become large in size, set up symlink if you want to store elsewhere.
 
