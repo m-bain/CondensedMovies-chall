@@ -11,6 +11,7 @@ import transformers
 from trainer.trainer import verbose
 import numpy as np
 from utils.util import state_dict_data_parallel_fix
+import zipfile
 
 ex = Experiment('test')
 
@@ -112,8 +113,12 @@ def run():
             verbose(epoch=0, metrics=res, name="", mode=metric_name)
             nested_metrics[metric_name] = res
     elif data_loader.dataset.split == 'test':
-        print(f"--For test submission, please upload {sim_save_fp} to the Codalab site.--\n"
-              f"[[[[[[[   ADD CODALAB SITE HERE   ]]]]]]")
+        # create zip file for submission
+        submission_zip = sim_save_fp.parent / 'submission.zip'
+        zipfile.ZipFile(submission_zip, mode='w').write(sim_save_fp, sim_save_fp.name)
+
+        print(f"--For test submission, please upload {submission_zip} to the Codalab site.--\n"
+              f"https://competitions.codalab.org/competitions/34124#participate-submit_results")
 
     # if config.config['visualizer']:
     #     meta_arr_cat = {key: [] for key in meta_arr[0]}

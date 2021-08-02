@@ -1,0 +1,91 @@
+{
+    "name": "baseline_subexp",
+    "n_gpu": 4,
+    "arch": {
+        "type": "BaselineModel",
+        "args": {
+            "text_params": {
+                "model": "distilbert-base-uncased",
+                "pretrained": true,
+                "input": "text"
+            },
+            "projection_dim": 256
+        }
+    },
+    "data_loader": {
+        "type": "CondensedMoviesDataLoader",
+        "args": {
+            "data_dir": "data/CondensedMovies",
+            "shuffle": true,
+            "num_workers": 4,
+            "batch_size": 64,
+            "split": "train",
+            "experts": {
+                "resnext101": {
+                    "src": "pred_imagenet_25fps_256px_stride25_offset0/resnext101_32x48d",
+                    "max_tokens": 128,
+                    "use": false
+                },
+                "senet154": {
+                    "src": "pred_imagenet_25fps_256px_stride25_offset0/senet154",
+                    "max_tokens": 128,
+                    "use": false
+                },
+                "i3d": {
+                    "src": "pred_i3d_25fps_256px_stride8_offset0_inner_stride1/i3d",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "vggish": {
+                    "src": "pred_audio/vggish",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "scene": {
+                    "src": "pred_scene_25fps_256px_stride25_offset0/densenet161",
+                    "max_tokens": 128,
+                    "use": false
+                },
+                "r2p1d": {
+                    "src": "pred_r2p1d_30fps_256px_stride16_offset0_inner_stride1/r2p1d-ig65m",
+                    "max_tokens": 128,
+                    "use": true
+                },
+                "subtitles": {
+                    "src": "pred_subs/bert-base-uncased_line",
+                    "max_tokens": 128,
+                    "use": true
+                }
+            }
+        }
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 3e-4
+        }
+    },
+    "loss": {
+        "type": "NormSoftmaxLoss",
+        "args": {
+        }
+    },
+    "metrics": [
+        "t2v_metrics",
+        "v2t_metrics"
+    ],
+    "trainer": {
+        "epochs": 100,
+        "max_samples_per_epoch": 30000,
+        "save_dir": "exps",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 10,
+        "neptune": false,
+        "init_val": true
+    },
+    "visualizer": {
+        "type": ""
+    }
+}
