@@ -9,7 +9,7 @@ To participate in the challenge, you must first download the new **Challenge ver
 1) Clone this repository.
 
 2)  **Download the dataset** (xGB). First, you can optionally choose where to download the features to (otherwise its downloaded to `./data`). To do this:
-    - [Optional] Set environment variable `export DATA_DIR="PATH_WHERE_YOU_WANT_TO_STORE_DATA`
+    - [Optional] Set environment variable `export DATA_DIR="PATH_WHERE_YOU_WANT_TO_STORE_DATA"`
     - Download `bash ./scripts/download_dataset.sh`
     - [Optional] If you set custom DATA_DIR, set up a symlink so it maps to ./data: `cd data; ln -s $DATA_DIR/CondensedMovies .; cd ..` 
 
