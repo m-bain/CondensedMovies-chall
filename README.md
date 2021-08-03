@@ -10,7 +10,7 @@ To participate in the challenge, you must first download the new **Challenge ver
 
 2)  **Download and unpack the dataset** (xGB). First, you can optionally choose where to download the features to (otherwise its downloaded to `./data`). To do this:
     - [Optional] Set environment variable `export DATA_DIR="PATH_WHERE_YOU_WANT_TO_STORE_DATA"`
-    - Download the dataset (see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/challenge.html "here"))
+    - Download the dataset (see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/challenge.html "here")), unpack the tar.gz
     - [Optional] If you set custom DATA_DIR, set up a symlink so it maps to ./data: `cd data; ln -s $DATA_DIR/CondensedMovies .; cd ..` 
 
 
