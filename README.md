@@ -69,9 +69,9 @@ Below is an overview for the dataset tree structure within a specific feature di
     ├── 2019
         ├── ...
     └── test (the features for the test videos)
-        ├── 1061.pkl.npy
-        ├── 1062.pkl.npy
-        ├── 1063.pkl.npy
+        ├── 1061.npy
+        ├── 1062.npy
+        ├── 1063.npy
         ├── ...
 ```
 
@@ -101,7 +101,7 @@ Evaluate on val set `python test.py --resume exps/models/{EXP_NAME}/{TIMESTAMP}/
 #### Test Submission
 Evaluate on test set `python test.py --resume exps/models/{EXP_NAME}/{TIMESTAMP}/model_best.pth --split test`
 
-Similarity matrix should be saved at `exps/models/{EXP_NAME}/{TIMESTAMP}/sim_matrix_test.npy`.
+Similarity matrix should be zipped at `exps/models/{EXP_NAME}/{TIMESTAMP}/submission.zip`.
 Please upload this to codalab for your submission.
 
 
