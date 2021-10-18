@@ -13,6 +13,7 @@ To participate in the challenge, you must first download the new **Challenge ver
     - Download the dataset (see [here](https://www.robots.ox.ac.uk/~vgg/research/condensed-movies/challenge.html "here")), unpack the tar.gz
     - [Optional] If you set custom DATA_DIR, set up a symlink so it maps to ./data: `cd data; ln -s $DATA_DIR/CondensedMovies .; cd ..` 
 
+3) **OPTIONAL:** Download original videos, please contact maxbain@robots.ox.ac.uk
 
 ## Dataset Overview
 
